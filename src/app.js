@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Header, UserBlock } from './components';
-import { AppContext } from './context';
+import { store } from './store';
 import styles from './app.module.css';
 
 const getUserFromServer = () => ({
@@ -20,51 +20,26 @@ const getNewUserDataFromServer = () => ({
 });
 
 export const App = () => {
-	// const userData = getUserFromServer();
-	const [userData, setUserData] = useState(null);
-
 	useEffect(() => {
 		const userDataFromServer = getUserFromServer();
 
-		setUserData(userDataFromServer);
+		store.dispatch({ type: 'SET_USER_DATA', payload: userDataFromServer });
 	}, []);
 
 	const onUserChange = () => {
 		const anotherUserDataFromServer = getNewUserDataFromServer();
 
-		setUserData(anotherUserDataFromServer);
-	};
-
-	const dispatch = (action) => {
-		const { type, payload } = action;
-
-		switch (type) {
-			case 'SET_USER_DATA': {
-				setUserData(payload);
-				break;
-			}
-			case 'SET_USER_AGE': {
-				setUserData({
-					...userData,
-					age: payload,
-				});
-				break;
-			}
-			default:
-			// ничего не делать
-		}
+		store.dispatch({ type: 'SET_USER_DATA', payload: anotherUserDataFromServer });
 	};
 
 	return (
-		<AppContext.Provider value={{ userData, dispatch }}>
-			<div className={styles.app}>
-				<Header />
-				<hr />
-				<UserBlock />
-				<button type="button" onClick={onUserChange}>
-					Сменить пользователя
-				</button>
-			</div>
-		</AppContext.Provider>
+		<div className={styles.app}>
+			<Header />
+			<hr />
+			<UserBlock />
+			<button type="button" onClick={onUserChange}>
+				Сменить пользователя
+			</button>
+		</div>
 	);
 };

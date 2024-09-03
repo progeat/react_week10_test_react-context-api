@@ -1,14 +1,17 @@
-import { useContext } from 'react';
-import { AppContext } from '../../../../context';
+import { store } from '../../../../store';
 
 export const UserPersonalInfo = () => {
-	const { userData, dispatch } = useContext(AppContext);
-	const { name, age } = userData;
+	const { name, age } = store.getState();
 
 	const onUserDataUpdate = () => {
-		const newUserData = getNewUserDataFromServer();
+		const { name, email, phone } = store.getState();
+		const newUserData = { name, age: 30, email, phone };
 
-		dispatch({ type: 'SET_USER_DATA', payload: newUserData });
+		store.dispatch({ type: 'SET_USER_DATA', payload: newUserData });
+	};
+
+	const onUserAgeDecrease = () => {
+		store.dispatch({ type: 'SET_USER_AGE', payload: 15 });
 	};
 
 	return (
@@ -16,7 +19,8 @@ export const UserPersonalInfo = () => {
 			<h3>Персональные данные:</h3>
 			<div>Имя: {name}</div>
 			<div>Возраст: {age}</div>
-			<button onClick={onUserDataUpdate}>Обновить данные пользователя</button>
+			<button onClick={onUserDataUpdate}>Обновить пользователя</button>
+			<button onClick={onUserAgeDecrease}>Обновить данные возраста</button>
 		</div>
 	);
 };
